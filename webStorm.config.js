@@ -4,5 +4,6 @@ System.config({
     "@pages/*": "./src/pages/*",
     "@templates/*": "./src/templates/*",
     "@assets/*": "./src/assets/*",
+    "@plugins/*": "./src/plugins/*",
   }
 });
