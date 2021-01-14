@@ -1,0 +1,44 @@
+.base-button {
+    @apply font-bold rounded shadow outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150 cursor-pointer;
+}
+
+.sm {
+    @apply base-button uppercase text-xs px-4 py-2 hover:shadow-md;
+}
+
+.md {
+    @apply base-button uppercase text-sm px-6 py-3 hover:shadow-lg;
+}
+
+.default-color {
+    @apply bg-white;
+}
+
+.primary-color {
+    @apply bg-purple-500 text-white;
+}
+
+.danger-color {
+    @apply bg-red-500 text-white;
+}
+
+@variants btn {
+    .default {
+        @apply base-button md default-color;
+    }
+    .default-sm {
+        @apply base-button sm default-color;
+    }
+    .primary {
+        @apply base-button md primary-color;
+    }
+    .primary-sm {
+        @apply base-button sm primary-color;
+    }
+    .danger {
+        @apply base-button md danger-color;
+    }
+    .danger-sm {
+        @apply base-button sm danger-color;
+    }
+}
