@@ -1,2 +1,6 @@
 @import "button.css";
 @import "form.css";
+
+.content-wrapper {
+    @apply min-w-0 break-words bg-white rounded px-5 py-2 shadow-lg;
+}

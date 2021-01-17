@@ -3,6 +3,7 @@ import React from "react";
 
 import NotificationDropdown from "@templates/Dropdowns/NotificationDropdown";
 import UserDropdown from "@templates/Dropdowns/UserDropdown";
+import {Link} from 'react-router-dom';
 
 export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState("hidden");
@@ -19,12 +20,12 @@ export default function Sidebar() {
             <i className="fas fa-bars"></i>
           </button>
           {/* Brand */}
-          <a
+          <Link
             className="md:block text-left md:pb-2 text-gray-700 mr-0 inline-block whitespace-no-wrap text-sm uppercase font-bold p-4 px-0"
             to="/admin"
           >
             TestApp
-          </a>
+          </Link>
           {/* User */}
           <ul className="md:hidden items-center flex flex-wrap list-none">
             <li className="inline-block relative">
@@ -45,12 +46,12 @@ export default function Sidebar() {
             <div className="md:min-w-full md:hidden block pb-4 mb-4 border-b border-solid border-gray-300">
               <div className="flex flex-wrap">
                 <div className="w-6/12">
-                  <a
+                  <Link
                     className="md:block text-left md:pb-2 text-gray-700 mr-0 inline-block whitespace-no-wrap text-sm uppercase font-bold p-4 px-0"
                     to="/admin"
                   >
                     TestApp
-                  </a>
+                  </Link>
                 </div>
                 <div className="w-6/12 flex justify-end">
                   <button
@@ -84,7 +85,7 @@ export default function Sidebar() {
             {/* Navigation */}
             <ul className="md:flex-col md:min-w-full flex flex-col list-none">
               <li className="items-center">
-                <a
+                <Link
                   className={
                     "text-xs uppercase py-3 font-bold block " +
                     (window.location.href.indexOf("/admin/dashboard") !== -1
@@ -102,7 +103,20 @@ export default function Sidebar() {
                     }
                   ></i>{" "}
                   Project
-                </a>
+                </Link>
+              </li>
+              <li className="items-center">
+                <Link
+                  className={
+                    "text-xs uppercase py-3 font-bold block " +
+                    (window.location.href.indexOf("/admin/scenario") !== -1
+                      ? "text-blue-500 hover:text-blue-600"
+                      : "text-gray-800 hover:text-gray-600")
+                  }
+                  to="/admin/scenario"
+                >
+                  <i className="fas fa-tv mr-2 text-sm"></i> Scenario
+                </Link>
               </li>
             </ul>
 

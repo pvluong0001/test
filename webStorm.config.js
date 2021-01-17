@@ -5,5 +5,6 @@ System.config({
     "@templates/*": "./src/templates/*",
     "@assets/*": "./src/assets/*",
     "@plugins/*": "./src/plugins/*",
+    "@reducers/*": "./src/reducers/*",
   }
 });

@@ -1,5 +1,5 @@
 .base-button {
-    @apply font-bold rounded shadow outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150 cursor-pointer;
+    @apply font-bold rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150 cursor-pointer;
 }
 
 .sm {

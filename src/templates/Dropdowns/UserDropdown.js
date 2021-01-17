@@ -1,8 +1,10 @@
 import React from "react";
 import { createPopper } from "@popperjs/core";
 import avatar from '@assets/img/team-1-800x800.jpg';
+import {connect} from 'react-redux';
+import {logout} from '@reducers/auth/action';
 
-const UserDropdown = () => {
+const UserDropdown = (props) => {
   // dropdown props
   const [dropdownPopoverShow, setDropdownPopoverShow] = React.useState(false);
   const btnDropdownRef = React.createRef();
@@ -73,17 +75,20 @@ const UserDropdown = () => {
         </a>
         <div className="h-0 my-2 border border-solid border-gray-200" />
         <a
-          href="#pablo"
           className={
             "text-sm py-2 px-4 font-normal block w-full whitespace-no-wrap bg-transparent text-gray-800"
           }
-          onClick={(e) => e.preventDefault()}
+          onClick={props.logout}
         >
-          Seprated link
+          Logout
         </a>
       </div>
     </>
   );
 };
 
-export default UserDropdown;
+const mapDispatchToProps = dispatch => ({
+  logout: () => dispatch(logout())
+})
+
+export default connect(null, mapDispatchToProps)(UserDropdown);

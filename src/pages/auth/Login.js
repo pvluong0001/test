@@ -1,10 +1,37 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import {useFormik} from 'formik';
+import * as Yup from 'yup';
+import ErrorText from '@components/text/ErrorText';
+import swal from 'sweetalert2';
+import {connect} from 'react-redux';
+import {loginHandle} from '@reducers/auth/action';
 
-import Navbar from '@templates/Navbars/AuthNavbar';
-import FooterSmall from '@templates/Footers/FooterSmall';
+const Login = (props) => {
+  const formik = useFormik({
+    initialValues: {
+      email: 'admin@test.com',
+      password: '123123123'
+    },
+    validationSchema: Yup.object().shape({
+      email: Yup.string().required().email(),
+      password: Yup.string().required()
+    }),
+    onSubmit: async (values, {setErrors}) => {
+      props.loginHandle(values)
+        .then(() => {
+          swal.fire({
+            title: 'Login success',
+            timer: 1500
+          })
+        })
+        .catch(e => {
+          if(e?.response?.data?.errors) {
+            setErrors(e.response.data.errors)
+          }
+        })
+    },
+  });
 
-export default function Login() {
   return (
     <>
       <main>
@@ -31,7 +58,7 @@ export default function Login() {
                     <hr className="mt-6 border-b-1 border-gray-400"/>
                   </div>
                   <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
-                    <form>
+                    <form onSubmit={formik.handleSubmit}>
                       <div className="relative w-full mb-3">
                         <label
                           className="block uppercase text-gray-700 text-xs font-bold mb-2"
@@ -40,10 +67,13 @@ export default function Login() {
                           Email
                         </label>
                         <input
-                          type="email"
+                          name="email"
                           className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                           placeholder="Email"
+                          value={formik.values.email}
+                          onChange={formik.handleChange}
                         />
+                        <ErrorText>{formik.errors.email}</ErrorText>
                       </div>
 
                       <div className="relative w-full mb-3">
@@ -54,16 +84,20 @@ export default function Login() {
                           Password
                         </label>
                         <input
+                          name="password"
                           type="password"
+                          value={formik.values.password}
+                          onChange={formik.handleChange}
                           className="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full ease-linear transition-all duration-150"
                           placeholder="Password"
                         />
+                        <ErrorText>{formik.errors.password}</ErrorText>
                       </div>
 
                       <div className="text-center mt-6">
                         <button
                           className="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
-                          type="button"
+                          type="submit"
                         >
                           Sign In
                         </button>
@@ -79,3 +113,9 @@ export default function Login() {
     </>
   );
 }
+
+const mapDispatchToProps = dispatch => ({
+  loginHandle: payload => dispatch(loginHandle(payload))
+})
+
+export default connect(null, mapDispatchToProps)(Login)
