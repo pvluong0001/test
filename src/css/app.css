@@ -4,3 +4,15 @@
 .content-wrapper {
     @apply min-w-0 break-words bg-white rounded px-5 py-2 shadow-lg;
 }
+
+.divide {
+    @apply border-b border-gray-400 my-5;
+}
+
+.not-allow {
+    @apply cursor-not-allowed !important;
+}
+
+.badge {
+    @apply text-xs font-semibold inline-block py-1 px-2 uppercase rounded text-purple-700 bg-purple-200 uppercase last:mr-0 mr-1;
+}

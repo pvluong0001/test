@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useFormik} from 'formik';
 import * as Yup from 'yup';
 import ErrorText from '@components/text/ErrorText';
@@ -7,6 +7,8 @@ import {connect} from 'react-redux';
 import {loginHandle} from '@reducers/auth/action';
 
 const Login = (props) => {
+  const [error, setError] = useState(null);
+
   const formik = useFormik({
     initialValues: {
       email: 'admin@test.com',
@@ -25,8 +27,13 @@ const Login = (props) => {
           })
         })
         .catch(e => {
-          if(e?.response?.data?.errors) {
-            setErrors(e.response.data.errors)
+          if(e.response?.data?.error) {
+            return setError(e.response.data.error)
+          }
+
+          const error = e?.response?.data?.errors
+          if(error) {
+            return setErrors(e.response.data.errors)
           }
         })
     },
@@ -59,6 +66,9 @@ const Login = (props) => {
                   </div>
                   <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
                     <form onSubmit={formik.handleSubmit}>
+                      {
+                        error && <ErrorText className="mb-5">{error}</ErrorText>
+                      }
                       <div className="relative w-full mb-3">
                         <label
                           className="block uppercase text-gray-700 text-xs font-bold mb-2"
