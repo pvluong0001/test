@@ -7,24 +7,39 @@ const FormGroup = (props) => {
   const [field, meta] = useField(props);
 
   let render;
-  if(props.children) {
+  if (props.children) {
     render = (
       <>{props.children}</>
-    )
+    );
   } else {
     render = (
       <>
-        <input type="text" id={props.name} {...field} {...props} placeholder={props.name} className="input"/>
-        {meta.touched && meta.error ? (
-          <ErrorText>{meta.error}</ErrorText>
-        ) : null}
+        {
+          props.type === 'textarea' ? (
+            <>
+              <textarea id={props.name} className={"textarea " + (props.inputClass || '')} {...field} placeholder={props.name}></textarea>
+              {meta.touched && meta.error ? (
+                <ErrorText>{meta.error}</ErrorText>
+              ) : null}
+            </>
+          ) : (
+            <>
+              <input type="text" id={props.name} {...field} {...props}
+                     placeholder={props.name} className="input"/>
+              {meta.touched && meta.error ? (
+                <ErrorText>{meta.error}</ErrorText>
+              ) : null}
+            </>
+          )
+        }
       </>
-    )
+    );
   }
 
   return (
-    <div className={"mb-3 pt-0 " + props.className}>
-      <label htmlFor="name" className="capitalize block mb-2">{props.name}</label>
+    <div className={'mb-3 pt-0 ' + (props.className || '')}>
+      <label htmlFor="name"
+             className="capitalize block mb-2">{props.name}</label>
       {render}
     </div>
   );
@@ -33,8 +48,13 @@ const FormGroup = (props) => {
 FormGroup.propTypes = {
   name: PropTypes.string,
   className: PropTypes.string,
-  model: PropTypes.any,
-  onChange: PropTypes.func
-}
+  inputClass: PropTypes.string,
+  type: PropTypes.string,
+  onChange: PropTypes.func,
+};
+
+FormGroup.defaultProps = {
+  type: 'text',
+};
 
 export default FormGroup;

@@ -7,10 +7,13 @@ import SubmitBtn from '@components/form/SubmitBtn';
 import api from '@plugins/api';
 import Autosuggest from 'react-autosuggest';
 import debounce from 'lodash/debounce';
+import {history} from '@src/configureStore';
 
 const theme = {
   container: 'relative',
-  suggestionsContainer: 'absolute bg-white w-full border shadow-lg rounded-b-md'
+  suggestionsContainer: 'absolute bg-white w-full border shadow-lg rounded-b-md',
+  suggestionHighlighted: 'bg-gray-100',
+  suggestionFirst: 'bg-gray-100'
 }
 
 const CreateScenario = () => {
@@ -21,9 +24,11 @@ const CreateScenario = () => {
   const onSuggestionsFetchRequested = useCallback(debounce(({value}) => {
     api.get(`/tag?s=${value}`)
     .then(res => {
-      setSuggestions(res.data.data)
+      const idList = tags.map(tag => tag.id);
+      const filterResult = res.data.data.filter(tag => !idList.includes(tag.id))
+      setSuggestions(filterResult)
     })
-  }, 300), [])
+  }, 150), [])
 
   const onSuggestionsClearRequested = () => {
     setSuggestions([]);
@@ -38,14 +43,22 @@ const CreateScenario = () => {
   );
 
   function onSuggestionSelected(event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) {
-    console.log(suggestionValue, suggestion);
+    setTags([...tags, {...suggestion}]);
   }
 
   function handlePressSearch(e) {
     // press enter
     if (e.nativeEvent.keyCode === 13) {
-      createSearch(value)
       e.preventDefault();
+
+      if(suggestions.length === 1) {
+        setTags([...tags, suggestions[0]]);
+      } else {
+        createSearch(value)
+      }
+
+      setValue('');
+      setSuggestions([]);
     }
   }
 
@@ -53,8 +66,8 @@ const CreateScenario = () => {
     api.post('/tag', {
       name: value
     }).then(res => {
-      console.log(res, '~~~');
-    })
+      setTags([...tags, res.data.data]);
+    }).catch(() => {})
   }
 
   const onChange = (event, { newValue, method }) => {
@@ -83,13 +96,22 @@ const CreateScenario = () => {
 
   const formik = {
     initValues: {
-      name: ''
+      name: '',
+      description: ''
     },
     validationSchema: Yup.object().shape({
       name: Yup.string().required()
     }),
     submit: (values) => {
-      console.log(values, '++++++++');
+      const payload = {
+        ...values,
+        tags: tags.map(tag => tag.id)
+      }
+
+      api.post('/scenario', payload)
+        .then(() => {
+          return history.push('/admin/scenario')
+        })
     }
   }
 
@@ -113,7 +135,11 @@ const CreateScenario = () => {
           props => (
             <Form>
               <div className="flex gap-5">
-                <FormGroup name="name" className="flex-1"/>
+                <div className="flex-1">
+                  <FormGroup name="name"/>
+                  <FormGroup name="description" type="textarea" inputClass="h-80"/>
+                </div>
+
                 <FormGroup name="tags" className="flex-1">
                   <Autosuggest
                     suggestions={suggestions}

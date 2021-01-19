@@ -6,5 +6,6 @@ System.config({
     "@assets/*": "./src/assets/*",
     "@plugins/*": "./src/plugins/*",
     "@reducers/*": "./src/reducers/*",
+    "@src/*": "./src/*",
   }
 });
