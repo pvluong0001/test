@@ -8,6 +8,7 @@ import api from '@plugins/api';
 import Autosuggest from 'react-autosuggest';
 import debounce from 'lodash/debounce';
 import {history} from '@src/configureStore';
+import Swal from 'sweetalert2';
 
 const theme = {
   container: 'relative',
@@ -81,13 +82,6 @@ const CreateScenario = () => {
     onChange
   };
 
-  // useEffect(() => {
-  //   api.get('/tag')
-  //     .then(res => {
-  //       setTags(res.data.data)
-  //     })
-  // }, [])
-
   const Tags = () => {
     return tags.map(tag => (
       <span key={tag.id} className="badge">{tag.name}</span>
@@ -110,6 +104,11 @@ const CreateScenario = () => {
 
       api.post('/scenario', payload)
         .then(() => {
+          Swal.fire({
+            timer: 1500,
+            title: 'Create success'
+          })
+
           return history.push('/admin/scenario')
         })
     }

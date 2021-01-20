@@ -2,6 +2,11 @@
     @apply font-bold rounded shadow outline-none focus:outline-none ease-linear transition-all duration-150 cursor-pointer;
 }
 
+.delete-btn {
+    @apply cursor-pointer hover:bg-gray-200 py-2 px-3 transition-all duration-300 rounded-sm;
+    color: red;
+}
+
 .sm {
     @apply base-button uppercase text-xs px-4 py-2 hover:shadow-md;
 }

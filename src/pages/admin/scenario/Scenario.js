@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import api from '@plugins/api';
-import CardTable from '@templates/Cards/CardTable';
 import DataTable from 'react-data-table-component';
 import {Link} from 'react-router-dom';
+import {deleteConfirm} from '@plugins/helpers';
+import Swal from 'sweetalert2';
 
 const customStyles = {
   header: {
@@ -30,9 +31,36 @@ const Scenario = () => {
     },
     {
       name: 'tags',
-      selector: 'tags'
+      selector: 'tags',
+      cell: row => {
+        return row.tags.map(tag => (
+          <span className="badge" key={tag.id}>{tag.name}</span>
+        ));
+      },
+    },
+    {
+      name: 'actions',
+      cell: row => {
+        return (
+          <>
+            <span className="delete-btn" onClick={() => handleDeleteScenario(row.id)}><i className="fas fa-trash"></i></span>
+          </>
+        )
+      },
+      width: '100px'
     }
   ]
+
+  function handleDeleteScenario(id) {
+    deleteConfirm(() => {
+      api.delete(`/scenario/${id}`)
+        .then(res => {
+          setScenarios(scenarios.filter(scenario => scenario.id !== id))
+
+          Swal.fire('Delete success!');
+        })
+    })
+  }
 
   useEffect(() => {
     api.get('/scenario')
@@ -48,7 +76,7 @@ const Scenario = () => {
       </div>
       <div className="shadow-lg">
         <DataTable
-          title="Arnold Movies"
+          title="Scenarios"
           columns={columns}
           data={scenarios}
           customStyles={customStyles}

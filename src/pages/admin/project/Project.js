@@ -1,14 +1,31 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import api from "@plugins/api"
 import {Link} from 'react-router-dom';
 import {deleteConfirm} from '@plugins/helpers';
 import Swal from 'sweetalert2';
 import Modal from '@components/share/Modal';
 import {connect} from 'react-redux';
+import {useFormik} from 'formik';
+import ErrorText from '@components/text/ErrorText';
+import * as Yup from 'yup';
 
 const Project = () => {
   const [projects, setProjects] = useState([])
-  const projectName = useRef(null);
+  const formik = useFormik({
+    initialValues: {
+      name: ''
+    },
+    validationSchema: Yup.object().shape({
+      name: Yup.string().required()
+    }),
+    onSubmit: values => {
+      console.log("hererere");
+      api.post('/project', values).then(res => {
+        setProjects([...projects, res.data.data])
+        Swal.fire("Create Success!!")
+      })
+    }
+  })
 
   useEffect(() => {
     api.get('project')
@@ -36,14 +53,12 @@ const Project = () => {
   }
 
   const handleCreateProject = (callback) => {
-    api.post('/project', {
-      name: projectName.current.value
-    }).then(res => {
-      setProjects([...projects, res.data.data])
-      callback(false);
-
-      Swal.fire("Create Success!!")
-    })
+    // formik.validateForm()
+    //   .then((res) => {
+    //     console.log(res, '++++++++');
+    //
+    //   })
+    //   .catch(console.log)
   }
 
   const handleDeleteProject = async (projectId) => {
@@ -59,15 +74,18 @@ const Project = () => {
 
   return (
     <>
-      <div className="text-right mb-5">
+      <div className="mb-5 flex flex-row-reverse">
         <Modal
           name="New Project"
           title="New Project"
           submit={handleCreateProject}
         >
-          <div className="mb-3 pt-0">
-            <input type="text" ref={el => { projectName.current = el; }} placeholder="Project name" className="input" />
-          </div>
+          <form onSubmit={formik.handleSubmit}>
+            <div className="mb-3 pt-0">
+              <input type="text" name="name" onChange={formik.handleChange} value={formik.values.name} placeholder="Project name" className="input" />
+              <ErrorText>{formik.errors.name}</ErrorText>
+            </div>
+          </form>
         </Modal>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 z-20">

@@ -1,7 +1,47 @@
-import React from "react";
+import React, {useState} from "react";
+import PropTypes from "prop-types";
+import {withFormik} from 'formik';
 
-export default function Modal(props) {
+const Modal = (props) => {
   const [showModal, setShowModal] = React.useState(false);
+
+  let Content = () => (
+    <>
+      {/*body*/}
+      <div className="relative p-6 flex-auto">
+        {props.children}
+      </div>
+      {/*footer*/}
+      <div className="flex items-center gap-10 justify-end p-6 border-t border-solid border-gray-300 rounded-b">
+        <button
+          className="btn:default-sm"
+          type="button"
+          onClick={() => setShowModal(false)}
+        >
+          Close
+        </button>
+        <button
+          className="btn:primary-sm"
+          type="submit"
+          // onClick={() => setShowModal(false)}
+        >
+          Save Changes
+        </button>
+      </div>
+    </>
+  )
+
+  if(props.formik) {
+    Content = withFormik({
+      mapPropsToValues: {
+        name: ''
+      },
+      handleSubmit: (values, { setSubmitting }) => {
+        console.log(values);
+      },
+    })(Content)
+  }
+
   return (
     <>
       <button
@@ -33,27 +73,7 @@ export default function Modal(props) {
                     </span>
                   </button>
                 </div>
-                {/*body*/}
-                <div className="relative p-6 flex-auto">
-                  {props.children}
-                </div>
-                {/*footer*/}
-                <div className="flex items-center gap-10 justify-end p-6 border-t border-solid border-gray-300 rounded-b">
-                  <button
-                    className="btn:default-sm"
-                    type="button"
-                    onClick={() => setShowModal(false)}
-                  >
-                    Close
-                  </button>
-                  <button
-                    className="btn:primary-sm"
-                    type="button"
-                    onClick={() => props.submit(setShowModal)}
-                  >
-                    Save Changes
-                  </button>
-                </div>
+                <Content/>
               </div>
             </div>
           </div>
@@ -63,3 +83,11 @@ export default function Modal(props) {
     </>
   );
 }
+
+Modal.propTypes = {
+  name: PropTypes.string,
+  title: PropTypes.string,
+  formik: PropTypes.object
+}
+
+export default Modal;
