@@ -1,45 +1,52 @@
-import React, {useState} from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+} from 'react';
 import PropTypes from "prop-types";
-import {withFormik} from 'formik';
+import {Form, Formik} from 'formik';
+import SubmitBtn from '@components/form/SubmitBtn';
 
-const Modal = (props) => {
+const Modal = forwardRef((props, ref) => {
   const [showModal, setShowModal] = React.useState(false);
+  useImperativeHandle(ref, () => ({
+    setShowModal
+  }))
 
-  let Content = () => (
-    <>
-      {/*body*/}
-      <div className="relative p-6 flex-auto">
-        {props.children}
-      </div>
-      {/*footer*/}
-      <div className="flex items-center gap-10 justify-end p-6 border-t border-solid border-gray-300 rounded-b">
-        <button
-          className="btn:default-sm"
-          type="button"
-          onClick={() => setShowModal(false)}
-        >
-          Close
-        </button>
-        <button
-          className="btn:primary-sm"
-          type="submit"
-          // onClick={() => setShowModal(false)}
-        >
-          Save Changes
-        </button>
-      </div>
-    </>
-  )
+  useEffect(() => {
+    props.modalStateChange(showModal);
+  })
 
-  if(props.formik) {
-    Content = withFormik({
-      mapPropsToValues: {
-        name: ''
-      },
-      handleSubmit: (values, { setSubmitting }) => {
-        console.log(values);
-      },
-    })(Content)
+  const Content = (contentProps) => {
+    const {formik} = contentProps;
+
+    return (
+      <>
+        {/*body*/}
+        <div className="relative p-6 flex-auto">
+          {props.children({
+            ...props,
+            setShowModal,
+            formik
+          })}
+        </div>
+        {/*footer*/}
+        <div className="flex items-center gap-5 justify-end p-6 border-t border-solid border-gray-300 rounded-b">
+          <button
+            className="btn:default-sm"
+            type="button"
+            onClick={() => setShowModal(false)}
+          >
+            Close
+          </button>
+          <SubmitBtn {...formik}/>
+        </div>
+      </>
+    )
+  }
+
+  function handleSubmit(values) {
+    return props.formik.onSubmit(values, setShowModal)
   }
 
   return (
@@ -58,7 +65,10 @@ const Modal = (props) => {
           >
             <div className="relative w-auto my-6 mx-auto max-w-3xl">
               {/*content*/}
-              <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+              <div
+                className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none"
+                style={{minWidth: props.minWidth}}
+              >
                 {/*header*/}
                 <div className="flex items-start justify-between p-3 border-b border-solid border-gray-300 rounded-t">
                   <h3 className="text-xl font-semibold">
@@ -73,7 +83,19 @@ const Modal = (props) => {
                     </span>
                   </button>
                 </div>
-                <Content/>
+                <Formik
+                  initialValues={props.formik.initialValues}
+                  onSubmit={handleSubmit}
+                  validationSchema={props.formik.validationSchema}
+                >
+                  {
+                    formikProps => (
+                      <Form>
+                        <Content formik={formikProps}/>
+                      </Form>
+                    )
+                  }
+                </Formik>
               </div>
             </div>
           </div>
@@ -82,12 +104,14 @@ const Modal = (props) => {
       ) : null}
     </>
   );
-}
+})
 
 Modal.propTypes = {
   name: PropTypes.string,
   title: PropTypes.string,
-  formik: PropTypes.object
+  formik: PropTypes.object,
+  minWidth: PropTypes.string,
+  modalStateChange: PropTypes.func
 }
 
 export default Modal;

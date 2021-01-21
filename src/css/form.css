@@ -5,3 +5,12 @@
 .textarea {
     @apply w-full px-3 py-2 text-gray-700 border border-gray-400 rounded focus:outline-none;
 }
+
+.form-group-label {
+    @apply capitalize block mb-2;
+}
+
+.form-group-label.require:before {
+    content: '*';
+    @apply text-red-500 font-bold mr-1;
+}

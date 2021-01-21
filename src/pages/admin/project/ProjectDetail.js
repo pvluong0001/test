@@ -21,7 +21,11 @@ const ProjectDetail = () => {
       {
         project ?
           <>
-            <h1>{project.name}</h1>
+            <h1 className="text-2xl font-bold">{project.name}</h1>
+            <div className="divide"></div>
+            <div>
+              {project.description}
+            </div>
           </> :
           <ArticleSkeleton/>
       }

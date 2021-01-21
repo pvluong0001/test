@@ -1,64 +1,77 @@
-import React, { useEffect, useState } from 'react';
-import api from "@plugins/api"
-import {Link} from 'react-router-dom';
+import React, {useEffect, useRef, useState, useMemo} from 'react';
+import api from '@plugins/api';
 import {deleteConfirm} from '@plugins/helpers';
 import Swal from 'sweetalert2';
 import Modal from '@components/share/Modal';
 import {connect} from 'react-redux';
-import {useFormik} from 'formik';
-import ErrorText from '@components/text/ErrorText';
 import * as Yup from 'yup';
+import FormGroup from '@components/form/FormGroup';
+import ProjectItem from '@components/domain/project/ProjectItem';
 
 const Project = () => {
-  const [projects, setProjects] = useState([])
-  const formik = useFormik({
-    initialValues: {
-      name: ''
-    },
-    validationSchema: Yup.object().shape({
-      name: Yup.string().required()
-    }),
-    onSubmit: values => {
-      console.log("hererere");
+  const [projects, setProjects] = useState([]);
+  const [currentProject, setCurrentProject] = useState(null);
+  const modalRef = useRef();
+  const formik = useMemo(() => {
+    function storeProject(values, setModal) {
       api.post('/project', values).then(res => {
-        setProjects([...projects, res.data.data])
-        Swal.fire("Create Success!!")
-      })
+        setProjects([...projects, res.data.data]);
+        Swal.fire('Create Success!!');
+
+        setModal(false);
+      });
     }
-  })
+
+    function updateProject(values, setModal) {
+      api.put(`/project/${currentProject.id}`, values).then(res => {
+        const index = projects.findIndex(project => project.id === currentProject.id)
+        const newProject = [...projects];
+        newProject[index] = res.data.data;
+        setProjects(newProject);
+        Swal.fire('Update Success!!');
+
+        setModal(false);
+      });
+    }
+
+    return {
+      initialValues: {
+        name: currentProject?.name || '',
+        description: currentProject?.description || ''
+      },
+      validationSchema: Yup.object().shape({
+        name: Yup.string().required(),
+        description: Yup.string().required()
+      }),
+      onSubmit: currentProject ? updateProject : storeProject,
+      currentProject: null
+    }
+  }, [currentProject, projects])
+
+  const modalTitle = useMemo(() => {
+    return currentProject ? `Update '${currentProject.name}' project` : 'New Project';
+  }, [currentProject])
+
+  function modalStateChange(showModal) {
+    if(!showModal) {
+      setCurrentProject(null);
+    }
+  }
 
   useEffect(() => {
     api.get('project')
       .then(res => {
-        const { data: responseData } = res
+        const {data: responseData} = res;
 
-        setProjects(responseData.data)
-      })
-  }, [])
+        setProjects(responseData.data);
+      });
+  }, []);
 
-  const ProjectItem = ({ project, handleDelete }) => {
-    return (
-      <>
-        <div className="bg-white rounded shadow-lg transition transform hover:scale-105">
-          <Link className="p-2 block rounded-t hover:bg-gray-200" to={`/admin/project/${project.id}`}>{project.name}</Link>
-          <div className="p-2">
-            Content
-          </div>
-          <div className="p-2 rounded-b text-right">
-            <button className="btn:danger-sm" onClick={() => handleDelete(project.id)}><i className="fas fa-trash mr-2"></i>Delete</button>
-          </div>
-        </div>
-      </>
-    )
-  }
+  function handleOpenEdit(projectId) {
+    const project = projects.find(project => project.id === projectId);
+    setCurrentProject(project);
 
-  const handleCreateProject = (callback) => {
-    // formik.validateForm()
-    //   .then((res) => {
-    //     console.log(res, '++++++++');
-    //
-    //   })
-    //   .catch(console.log)
+    modalRef.current.setShowModal(true)
   }
 
   const handleDeleteProject = async (projectId) => {
@@ -67,30 +80,45 @@ const Project = () => {
         .then(() => {
           setProjects(projects.filter(project => project.id !== projectId));
 
-          Swal.fire("Delete Success!!")
-        })
-    })
-  }
+          Swal.fire('Delete Success!!');
+        });
+    });
+  };
 
   return (
     <>
       <div className="mb-5 flex flex-row-reverse">
         <Modal
           name="New Project"
-          title="New Project"
-          submit={handleCreateProject}
+          title={modalTitle}
+          formik={formik}
+          minWidth="500px"
+          ref={modalRef}
+          modalStateChange={modalStateChange}
         >
-          <form onSubmit={formik.handleSubmit}>
-            <div className="mb-3 pt-0">
-              <input type="text" name="name" onChange={formik.handleChange} value={formik.values.name} placeholder="Project name" className="input" />
-              <ErrorText>{formik.errors.name}</ErrorText>
-            </div>
-          </form>
+          {
+            () => {
+              return (
+                <>
+                  <FormGroup name="name" required={true}/>
+                  <FormGroup name="description" type="textarea" inputClass="h-80" required={true}/>
+                </>
+              );
+            }
+          }
         </Modal>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 z-20">
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-10 z-20">
         {
-          projects.map(item => <ProjectItem handleDelete={handleDeleteProject} key={item.id} project={item} />)
+          projects.map(item => (
+            <ProjectItem
+              handleDelete={handleDeleteProject}
+              handleOpenEdit={handleOpenEdit}
+              key={item.id}
+              project={item}
+            />
+          ))
         }
       </div>
     </>

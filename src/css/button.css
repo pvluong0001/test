@@ -27,6 +27,10 @@
     @apply bg-red-500 text-white;
 }
 
+.warning-color {
+    @apply bg-yellow-500 text-white;
+}
+
 @variants btn {
     .default {
         @apply base-button md default-color;
@@ -45,5 +49,11 @@
     }
     .danger-sm {
         @apply base-button sm danger-color;
+    }
+    .warning {
+        @apply base-button md warning-color;
+    }
+    .warning-sm {
+        @apply base-button sm warning-color;
     }
 }

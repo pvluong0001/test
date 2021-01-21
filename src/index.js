@@ -8,12 +8,14 @@ import reportWebVitals from './reportWebVitals';
 import {Provider} from 'react-redux';
 import configureStore, {history} from './configureStore';
 import {ConnectedRouter} from 'connected-react-router';
+import ScrollToTop from '@components/ScrollToTop';
 
 const store = configureStore();
 
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedRouter history={history}>
+      <ScrollToTop/>
       <App/>
     </ConnectedRouter>
   </Provider>,
