@@ -23,7 +23,7 @@ const CreateScenario = () => {
   const [suggestions, setSuggestions] = useState([]);
 
   const onSuggestionsFetchRequested = useCallback(debounce(({value}) => {
-    api.get(`/tag?s=${value}`)
+    api.get(`/tag/search?s=${value}`)
     .then(res => {
       const idList = tags.map(tag => tag.id);
       const filterResult = res.data.data.filter(tag => !idList.includes(tag.id))
@@ -77,7 +77,7 @@ const CreateScenario = () => {
   }
 
   const inputProps = {
-    placeholder: "Search Star Wars",
+    placeholder: "Search ...",
     value,
     onChange
   };

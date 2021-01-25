@@ -20,12 +20,6 @@ const Login = (props) => {
     }),
     onSubmit: async (values, {setErrors}) => {
       props.loginHandle(values)
-        .then(() => {
-          swal.fire({
-            title: 'Login success',
-            timer: 1500
-          })
-        })
         .catch(e => {
           if(e.response?.data?.error) {
             return setError(e.response.data.error)

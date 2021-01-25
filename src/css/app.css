@@ -27,3 +27,34 @@
     @apply absolute w-full bottom-0 py-3 text-center text-blue-400 cursor-pointer hover:border-t border-blue-200;
     background: linear-gradient(to bottom,rgba(241,243,251,0) 0%,#f1f3fb 60%);
 }
+
+/** tree option **/
+
+.tree-option-wrapper .tree-result {
+    @apply rounded border-gray-400 border p-2;
+}
+
+.tree-option-wrapper .tree-result .tree-result-item {
+    @apply badge;
+    font-size: 1rem;
+}
+
+.tree-option-wrapper .tree-toggle-content {
+    @apply absolute top-1 left-0 w-full bg-gray-50 rounded shadow-lg border border-gray-300 p-1;
+}
+
+.tree-option-wrapper .tree-option {
+    @apply mb-1 rounded;
+}
+
+.tree-option-wrapper .tree-option .tree-label {
+    @apply hover:bg-gray-200 transition-all duration-100 block p-2 flex items-center;
+}
+
+.tree-option-wrapper .tree-option label {
+    @apply flex-1;
+}
+
+.tree-option-wrapper .tree-option:last-child {
+    @apply mb-0;
+}

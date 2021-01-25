@@ -7,5 +7,6 @@ System.config({
     "@plugins/*": "./src/plugins/*",
     "@reducers/*": "./src/reducers/*",
     "@src/*": "./src/*",
+    "@helpers/*": "./helpers/*",
   }
 });

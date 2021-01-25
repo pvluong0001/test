@@ -10,6 +10,7 @@ module.exports = {
       '@plugins': path.resolve(__dirname, "src/plugins/"),
       '@reducers': path.resolve(__dirname, "src/reducers/"),
       '@src': path.resolve(__dirname, "src/"),
+      '@helpers': path.resolve(__dirname, "helpers/"),
     }
   },
   style: {
