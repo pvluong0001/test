@@ -11,6 +11,7 @@ import Project from '@pages/admin/project/Project';
 import ProjectDetail from '@pages/admin/project/ProjectDetail';
 import Scenario from '@pages/admin/scenario/Scenario';
 import CreateScenario from '@pages/admin/scenario/CreateScenario';
+import DetailScenario from '@pages/admin/scenario/DetailScenario';
 
 export default function Admin() {
   return (
@@ -28,6 +29,7 @@ export default function Admin() {
 
               <Route path="/admin/scenario" exact component={Scenario}/>
               <Route path="/admin/scenario/create" exact component={CreateScenario}/>
+              <Route path="/admin/scenario/:id" exact component={DetailScenario}/>
 
               <Route path="/admin" component={Dashboard}/>
             </Switch>

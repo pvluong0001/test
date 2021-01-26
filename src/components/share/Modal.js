@@ -15,7 +15,26 @@ const Modal = forwardRef((props, ref) => {
 
   useEffect(() => {
     props.modalStateChange(showModal);
+    window.addEventListener("keyup", handleKeyUp, false);
+
+    return () => {
+      window.removeEventListener("keyup", handleKeyUp, false);
+    }
   })
+
+  function handleKeyUp(e) {
+    const keys = {
+      27: () => {
+        e.preventDefault();
+        setShowModal(false);
+        window.removeEventListener("keyup", handleKeyUp, false);
+      }
+    };
+
+    if (keys[e.keyCode]) {
+      keys[e.keyCode]();
+    }
+  }
 
   const Content = (contentProps) => {
     const {formik} = contentProps;

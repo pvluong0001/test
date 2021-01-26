@@ -9,6 +9,7 @@ const ProjectDetail = () => {
   const {id} = useParams();
   const [project, setProject] = useState(null);
   const [tags, setTags] = useState([]);
+  const [scenarios, setScenarios] = useState([]);
 
   // get project detail
   useEffect(() => {
@@ -26,42 +27,67 @@ const ProjectDetail = () => {
       })
   }, [])
 
+  const oldScenarioIds = useMemo(() => {
+    return project ? project.scenarios.map(scenario => scenario.id) : []
+  }, [project]);
+
   const treeOptions = useMemo(() => {
     return tags.map(item => ({
-      value: item.id,
+      id: item.id,
       label: item.name,
       disabled: true,
       children: item.scenarios.map(scenarios => ({
-        value: scenarios.id,
+        id: scenarios.id,
         label: scenarios.name,
         optional: true,
-        checked: false
+        checked: oldScenarioIds.includes(scenarios.id)
       }))
     }))
-  }, [tags]);
+  }, [tags, oldScenarioIds]);
+
+  function handleSubmit() {
+    api.put(`/project/${id}/set-scenarios`, {
+      scenarios: scenarios.map(scenario => scenario.value)
+    }).then(res => {
+
+    })
+  }
+
+  function onChangeHandle(value) {
+    setScenarios(value);
+  }
 
   return (
-    <div className="flex gap-5">
-      {/*project detail*/}
-      <div className="flex-1 content-wrapper">
+    <>
+      <div className="flex gap-5">
         {
-          project ?
-            <Card title={project.name}>
-              <div className="divide"></div>
-              <div>
-                {project.description}
-              </div>
-              <div className="divide"></div>
-            </Card>
-            : <ArticleSkeleton/>
+          project && <>
+            {/*project detail*/}
+            <div className="flex-1 content-wrapper">
+              {
+                project ?
+                  <Card title={project.name}>
+                    <div className="divide"></div>
+                    <div>
+                      {project.description}
+                    </div>
+                  </Card>
+                  : <ArticleSkeleton/>
+              }
+            </div>
+            <div className="flex-1 content-wrapper">
+              <Card title="Scenario">
+                <TreeSelect options={treeOptions} onChange={onChangeHandle} oldValue={project.scenarios}/>
+              </Card>
+            </div>
+          </>
         }
       </div>
-      <div className="flex-1 content-wrapper">
-        <Card title="Scenario">
-          <TreeSelect options={treeOptions} />
-        </Card>
+
+      <div className="text-right content-wrapper mb-5 p-3">
+        <button className="btn:primary-sm" onClick={handleSubmit}>Save</button>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -31,7 +31,7 @@
 /** tree option **/
 
 .tree-option-wrapper .tree-result {
-    @apply rounded border-gray-400 border p-2;
+    @apply rounded border-gray-400 border p-2 flex flex-wrap gap-1;
 }
 
 .tree-option-wrapper .tree-result .tree-result-item {
@@ -57,4 +57,21 @@
 
 .tree-option-wrapper .tree-option:last-child {
     @apply mb-0;
+}
+
+/** testcase list */
+.detail-scenario-wrapper {
+    @apply grid grid-cols-5 gap-5;
+}
+
+.detail-scenario-wrapper .testcase-list {
+    @apply col-start-1 col-end-4;
+}
+
+.testcase-item {
+    @apply p-3 border border-gray-300 mb-1;
+}
+
+.detail-scenario-wrapper .scenario-box {
+    @apply col-start-4 col-end-6;
 }

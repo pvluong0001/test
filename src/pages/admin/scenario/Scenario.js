@@ -44,6 +44,7 @@ const Scenario = () => {
         return (
           <>
             <span className="delete-btn" onClick={() => handleDeleteScenario(row.id)}><i className="fas fa-trash"></i></span>
+            <Link to={`/admin/scenario/${row.id}`} className="edit-btn"><i className="fas fa-edit"></i></Link>
           </>
         )
       },
